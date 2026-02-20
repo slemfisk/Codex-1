@@ -1,0 +1,9 @@
+node_modules
+**/node_modules
+dist
+coverage
+.env
+apps/api/uploads
+apps/api/jobs
+apps/api/reports
+*.log
