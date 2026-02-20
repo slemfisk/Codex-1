@@ -1,27 +1,56 @@
-# Codex App Suite
+# SonicCritique
 
-One shared AI + backend powering 7 tools:
-1) AI Music Remix Generator
-2) Procedural 3D Scene Builder
-3) AI Dungeon Master
-4) Automation Script Hub
-5) Interactive Data Storyteller
-6) Web Scraper Builder
-7) Social Graph Mapper
+SonicCritique is a full-stack TypeScript music intelligence platform. It analyzes uploaded audio and returns:
+- producer-grade schema-validated critique JSON
+- deterministic/LLM/blended scores with confidence telemetry
+- v1 energy-based section segmentation
+- Suno AI v5 prompt-engine output and variants
 
-## Quickstart
+## Tech Stack
+- **Monorepo**: npm workspaces
+- **API**: Fastify, Zod, OpenAI SDK, zod-to-json-schema, Pino, Vitest
+- **Web**: React + TypeScript + Vite, TailwindCSS, shadcn-style UI primitives, Framer Motion, React Router
 
-1) Copy .env.example to .env and fill values or add them in your platform's env settings.
-2) Build & run:
+## Requirements
+- Node.js >= 20
+- ffmpeg installed and available on PATH
+
+## Setup
 ```bash
-docker compose up -d --build
+npm install
+cp apps/api/.env.example apps/api/.env
 ```
-3) Check:
-- API: http://localhost:8000/health/ping  -> {"status":"ok"}
-- Web: http://localhost:3000
-- MinIO Console: http://localhost:9001 (minio / minio12345)
 
-## Test the queue
+Edit `apps/api/.env` with your `OPENAI_API_KEY` (optional fallback exists if key is omitted).
+
+## Run
+### 1) Start API
 ```bash
-docker compose exec api python -c "from app.queue import example_job; print(example_job.delay(2,3).get(timeout=10))"
+npm run dev -w apps/api
 ```
+API is available at `http://localhost:3001`.
+
+### 2) Start Web
+```bash
+npm run dev -w apps/web
+```
+Web is available at `http://localhost:3000`.
+
+## Test
+```bash
+npm run test -w apps/api
+```
+
+## Build
+```bash
+npm run build
+```
+
+## Production note
+`CORS_ORIGIN=*` is for development only. Lock to specific origins in production.
+
+## Endpoints
+- `POST /api/analyze` multipart fields: `file`, `metadata`, `analysis_options`
+- `GET /api/analysis/:id`
+
+All endpoint responses are wrapped in `{requestId, ok, data|error}`.
